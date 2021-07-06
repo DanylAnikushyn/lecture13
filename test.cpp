@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "graph.hpp"
 
+#include <iostream>
+
 TEST(graph, graph)
 {
     Graph graph;
@@ -19,6 +21,19 @@ TEST(graph, graph)
     ASSERT_THROW(graph.get_edge("E2"), std::out_of_range);
     graph.remove_edge("E3");
     ASSERT_THROW(graph.get_edge("E3"), std::out_of_range);
+}
+
+TEST(graph, parsing)
+{
+    auto graph = Graph::parse_from_file("../test1.txt");
+    
+    auto neighbors1 = std::vector<std::string>{"E2", "E3"};
+    auto neighbors2 = std::vector<std::string>{"E3"};
+    auto neighbors3 = std::vector<std::string>{"E1"};
+
+    GTEST_ASSERT_EQ(neighbors1, graph->get_edge("E1"));
+    GTEST_ASSERT_EQ(neighbors2, graph->get_edge("E2"));
+    GTEST_ASSERT_EQ(neighbors3, graph->get_edge("E3"));
 }
 
 int main(int argc, char* argv[])

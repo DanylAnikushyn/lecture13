@@ -11,4 +11,5 @@ public:
     std::vector<std::string> get_edge(const std::string& edge) const;
     void add_edge(const std::string& edge, std::vector<std::string>& neighbors);
     void remove_edge(const std::string& edge);
+    static Graph* parse_from_file(const std::string& filename);
 };
