@@ -2,7 +2,11 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
+#include <queue>
+#include <stack>
 #include <sstream>
+#include <memory>
 
 std::vector<std::string> Graph::get_edge(const std::string& edge) const
 {
@@ -16,7 +20,33 @@ void Graph::remove_edge(const std::string& edge)
 {
     graph.erase(edge);
 }
-Graph* Graph::parse_from_file(const std::string& filename)
+std::unordered_map<std::string, std::string>
+Graph::search(const std::string& start, const std::string& goal)
+{
+    std::queue<std::string> queue;
+    queue.push(start);
+    std::unordered_map<std::string, std::string> reached;
+    reached[start] = start;
+    while (!queue.empty())
+    {
+        std::string& current = queue.front();
+        queue.pop();
+        if (current == goal)
+        {
+            break;
+        }
+        for (const auto& next : get_edge(current))
+        {
+            if (reached.find(next) == reached.end()) 
+            {
+                queue.push(next);
+                reached[next] = current;
+            }
+        } 
+    }
+    return reached;
+}
+std::unique_ptr<Graph> Graph::parse_from_file(const std::string& filename)
 {
     std::ifstream in(filename);
     
@@ -26,7 +56,7 @@ Graph* Graph::parse_from_file(const std::string& filename)
         return nullptr;
     }
 
-    auto graph = new Graph;
+    auto graph = std::make_unique<Graph>();
 
     std::string row;
     std::vector<std::string> neighbors;
